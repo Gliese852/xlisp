@@ -25,9 +25,9 @@ object-oriented programming.
 %cmake
 %cmake_build
 
-%install
 %cmake_install
 
+%install
 %files
 %_bindir/xlisp
 %_libdir/libxlisp-ext.so
