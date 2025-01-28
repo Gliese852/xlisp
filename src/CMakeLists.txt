@@ -31,5 +31,5 @@ else()
     list(APPEND xlisp_sources unstuff.c)
 endif()
 
-target_sources(xlisp PRIVATE ${xlisp_sources})
-target_include_directories(xlisp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include)
+target_sources(xlisp-lib PRIVATE ${xlisp_sources})
+target_include_directories(xlisp-lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include)

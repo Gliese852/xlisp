@@ -1,29 +1,30 @@
 cmake_minimum_required(VERSION 3.14)
-project(XLisp
+project(xlisp
     VERSION 3.3
     DESCRIPTION "XLISP - an object-oriented LISP"
     LANGUAGES C)
 
-add_library(xlisp "")
+add_library(xlisp-lib "")
 add_subdirectory(src)
 
-target_link_libraries(xlisp m)
-set_property(TARGET xlisp PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(xlisp-lib m)
+set_property(TARGET xlisp-lib PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-add_library(ext SHARED "")
+add_library(xlisp-ext SHARED "")
 add_subdirectory(ext)
 
-add_executable(xlisp-repl)
 add_subdirectory(xlisp)
 
 include(CheckIPOSupported)
 check_ipo_supported(RESULT can_link_time_optimize)
 if(can_link_time_optimize)
+    set_target_properties(xlisp-lib PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
+    set_target_properties(xlisp-ext PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
     set_target_properties(xlisp PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
-    set_target_properties(ext PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
-    set_target_properties(xlisp-repl PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
+include(GNUInstallDirs)
+# message(FATAL_ERROR ${CMAKE_INSTALL_FULL_LIBEXECDIR})
 
 #---------------------------------installation---------------------------------#
 # if(NOT WIN32 AND CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
@@ -32,18 +33,18 @@ endif()
 
 # The '.' ends up being relative to CMAKE_INSTALL_PREFIX.
 install(TARGETS
-    xlisp-repl ext
+    xlisp xlisp-ext
     COMPONENT xlisp_component
-    RUNTIME DESTINATION "./bin"
-    LIBRARY DESTINATION "./lib"
-    PUBLIC_HEADER DESTINATION "./include")
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
 
 install(FILES
     doc/api.md
     doc/crec.md
     doc/xlisp.md
     COMPONENT xlisp_component
-    DESTINATION "./doc")
+    DESTINATION ${CMAKE_INSTALL_FULL_DOCDIR})
 
 install(FILES
     clisp.lsp
@@ -61,7 +62,7 @@ install(FILES
     xlinit.lsp
     xlisp.lsp
     COMPONENT xlisp_component
-    DESTINATION "./bin")
+    DESTINATION ${CMAKE_INSTALL_FULL_LIBEXECDIR}/${PROJECT_NAME})
 
 #----------------------------------packaging-----------------------------------#
 set(CPACK_VERBATIM_VARIABLES YES)
