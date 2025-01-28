@@ -149,12 +149,19 @@ static xlValue getloadpath(void)
     const char *entry,*path;
     xlValue this,last;
 
+#ifdef XLISP_LIBS_PATH
+    xlVal = xlCons(xlMakeCString(XLISP_LIBS_PATH),xlNil);
+#else
+    xlVal = xlNil;
+#endif
+
     /* get the load path */
     if ((path = xlosLoadPath()) == NULL)
-        return xlNil;
+        return xlVal;
 
     /* append each directory to the path */
-    for (xlVal = xlNil; (entry = xlosParsePath(&path)) != NULL; ) {
+    last = xlVal;
+    for (; (entry = xlosParsePath(&path)) != NULL; ) {
         this = xlCons(xlMakeCString(entry),xlNil);
         if (xlVal == xlNil)
             xlVal = this;

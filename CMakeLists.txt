@@ -4,6 +4,13 @@ project(xlisp
     DESCRIPTION "XLISP - an object-oriented LISP"
     LANGUAGES C)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+include(GNUInstallDirs)
+
+set(XLISP_LIBS_PATH ${CMAKE_INSTALL_FULL_LIBEXECDIR}/${PROJECT_NAME})
+add_compile_definitions(XLISP_LIBS_PATH="${XLISP_LIBS_PATH}/")
+
 add_library(xlisp-lib "")
 add_subdirectory(src)
 
@@ -23,7 +30,6 @@ if(can_link_time_optimize)
     set_target_properties(xlisp PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
-include(GNUInstallDirs)
 # message(FATAL_ERROR ${CMAKE_INSTALL_FULL_LIBEXECDIR})
 
 #---------------------------------installation---------------------------------#
@@ -62,7 +68,7 @@ install(FILES
     xlinit.lsp
     xlisp.lsp
     COMPONENT xlisp_component
-    DESTINATION ${CMAKE_INSTALL_FULL_LIBEXECDIR}/${PROJECT_NAME})
+    DESTINATION ${XLISP_LIBS_PATH})
 
 #----------------------------------packaging-----------------------------------#
 set(CPACK_VERBATIM_VARIABLES YES)
