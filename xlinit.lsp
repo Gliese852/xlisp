@@ -12,6 +12,10 @@
 (ld "crec.lsp")
 (ld "pp.lsp")
 
+; ignore shebang and settings XXX
+(define -%s nil)
+(define #!/usr/bin/xlisp nil) ; XXX pull out from cmake
+
 ; this version of EVAL knows about the optional enviroment parameter
 (define (eval x &optional env)
   ((compile x env)))
