@@ -1057,6 +1057,8 @@ void xvalueslist(void);
 void xcallcc(void);
 void xcallwi(void);
 void xcallwo(void);
+void xpipewi(void);
+void xpipewo(void);
 void xload(void);
 void xloadnoisily(void);
 void xforce(void);
@@ -1276,6 +1278,7 @@ xlValue xlRemoveEntryFromTable(xlValue table,xlValue key);
 /* xlansi.c */
 xlEXPORT void xlosSetRand(long seed);
 xlEXPORT long xlosRand(long n);
+xlEXPORT FILE *xlosPipeCommand(const char *name,const char *mode);
 xlEXPORT FILE *xlosOpenText(const char *name,const char *mode);
 xlEXPORT FILE *xlosOpenBinary(const char *name,const char *mode);
 xlEXPORT int xlosClose(FILE *fp);

@@ -412,6 +412,8 @@ static xlXSubrDef xsubrtab[] = {
 {       "SPLIT-PATH-FROM-FILENAME",         xsplitpathfromfilename      },
 {       "CALL-WITH-INPUT-FILE",             xcallwi                     },
 {       "CALL-WITH-OUTPUT-FILE",            xcallwo                     },
+{       "CALL-WITH-INPUT-PIPE",             xpipewi                     },
+{       "CALL-WITH-OUTPUT-PIPE",            xpipewo                     },
 {       "LOAD",                             xload                       },
 {       "LOAD-NOISILY",                     xloadnoisily                },
 {       "FORCE",                            xforce                      },

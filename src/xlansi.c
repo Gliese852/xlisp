@@ -32,6 +32,12 @@ xlEXPORT long xlosRand(long n)
     return rseed % n;
 }
 
+/* xlosOpenPipe - open pipe */
+xlEXPORT FILE *xlosPipeCommand(const char *name,const char *mode)
+{
+    return popen(name,mode);
+}
+
 /* xlosOpenText - open an ascii file */
 xlEXPORT FILE *xlosOpenText(const char *name,const char *mode)
 {

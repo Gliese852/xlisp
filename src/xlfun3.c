@@ -14,6 +14,7 @@ static const char *showstring(const char *str,int bch);
 static void withfile_continuation(void);
 static void withfile_unwind(void);
 static void do_withfile(short flags,const char *mode);
+static void do_withpipe(short flags,const char *mode);
 static void do_load(xlValue print);
 static void load_continuation(void);
 static void load_unwind(void);
@@ -180,6 +181,18 @@ void xcallwo(void)
     do_withfile(xlpfOUTPUT | xlpfBOL,"w");
 }
 
+/* xpipewi - built-in function 'call-with-input-pipe' */
+void xpipewi(void)
+{
+    do_withpipe(xlpfINPUT,"r");
+}
+
+/* xpipewo - built-in function 'call-with-output-pipe' */
+void xpipewo(void)
+{
+    do_withpipe(xlpfOUTPUT | xlpfBOL,"w");
+}
+
 /* withfile_continuation - withfile continuation */
 static void withfile_continuation(void)
 {
@@ -215,6 +228,36 @@ static void do_withfile(short flags,const char *mode)
     file = xlMakeFileStream(NULL,flags);
     if ((fp = xlosOpenText(xlGetString(name),mode)) == NULL)
         xlError("can't open file",name);
+    xlSetSData(file,fp);
+
+    /* save a continuation */
+    xlCtlCheck(1);
+    xlCtlPush(file);
+    pushccontinuation(&withfile_cc);
+
+    /* setup the argument list */
+    xlCPush(file);
+    xlArgC = 1;
+
+    /* apply the function */
+    xlNext = xlApply;
+}
+
+/* do_withpipe - handle the 'call-with-xxx-pipe' functions */
+static void do_withpipe(short flags,const char *mode)
+{
+    xlValue name,file;
+    FILE *fp;
+
+    /* get the function to call */
+    name = xlGetArgString();
+    xlVal = xlGetArg();
+    xlLastArg();
+
+    /* create a file object */
+    file = xlMakeFileStream(NULL,flags);
+    if ((fp = xlosPipeCommand(xlGetString(name),mode)) == NULL)
+        xlError("can't pipe command",name);
     xlSetSData(file,fp);
 
     /* save a continuation */
