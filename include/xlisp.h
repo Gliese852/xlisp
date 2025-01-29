@@ -521,6 +521,9 @@ extern xlFIXTYPE xlGCCalls;             /* number of calls to the garbage collec
 extern const char **xlCmdLineArgV;
 extern int xlCmdLineArgC;
 
+/* start settings*/
+extern int xlOnlyRunScript; /* run the specified script(s) and exit, turn off banner and repl */
+
 /* subr definition structure */
 typedef struct {
     const char *name;

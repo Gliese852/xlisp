@@ -109,7 +109,7 @@
 (define (loader n)
   (let ((arg (getarg n)))
     (when arg
-      (format #t "~&; Loading '~A'" arg)
+      (when (not *ONLY-RUN-SCRIPT*) (format #t "~&; Loading '~A'" arg))
       (when (not (load arg))
         (display " -- failed"))
       (loader (1+ n)))))

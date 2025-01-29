@@ -11,8 +11,8 @@ int main(int argc,const char *argv[])
 {
     xlCallbacks *callbacks = xlDefaultCallbacks(argv[0]);
     xlInit(callbacks,argc,argv,NULL);
-    xlInfo("%s",xlBanner());
+    if (!xlOnlyRunScript) xlInfo("%s",xlBanner());
     xlLoadFile("xlisp.lsp");
-    xlCallFunctionByName(NULL,0,"*TOPLEVEL*",0);
+    if (!xlOnlyRunScript) xlCallFunctionByName(NULL,0,"*TOPLEVEL*",0);
     return 0;
 }

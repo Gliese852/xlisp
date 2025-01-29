@@ -16,6 +16,7 @@ int xlCmdLineArgC = 0;                  /* command line argument count */
 const char **xlCmdLineArgV = NULL;            /* array of command line arguments */
 xlEXPORT int xlInitializedP = FALSE;    /* true if initialization is done */
 xlEXPORT FILE *xlTranscriptFP = NULL;   /* trace file pointer */
+int xlOnlyRunScript = FALSE;
 
 /* external variables */
 extern xlValue s_package,xlUnboundObject,s_stderr,s_error,s_backtrace;
@@ -41,6 +42,10 @@ xlEXPORT int xlInit(xlCallbacks *callbacks,int argc,const char *argv[],const cha
         /* handle options */
         if (argv[src][0] == '-' && argv[src][1] == '%') {
             switch (argv[src][2]) {
+            case 's':           /* run provided script(s) and exit */
+                xlOnlyRunScript = TRUE;
+                usedP = TRUE;
+                break;
             case 't':           /* trace byte codes */
                 if (!argv[src][3]) {
                     xlTraceBytecodes = TRUE;

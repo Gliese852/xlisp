@@ -71,6 +71,8 @@ void xlInitWorkspace(int ssize)
     xlSetValue(xlInternAndExport("T",xlLispPackage),xlTrue);
     xlSetValue(xlInternAndExport("NIL",xlLispPackage),xlNil);
 
+    xlSetValue(xlInternAndExport("*ONLY-RUN-SCRIPT*",xlLispPackage), xlOnlyRunScript ? xlTrue : xlFalse);
+
     /* default to lowercase output of symbols */
     xlSetValue(s_printcase,k_downcase);
 
