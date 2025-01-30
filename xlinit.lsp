@@ -6,7 +6,7 @@
 (ld "qquote.lsp")
 (ld "macros.lsp")
 (ld "math.lsp")
-;(ld "clisp.lsp")
+(ld "clisp.lsp")
 (ld "objects.lsp")
 (ld "fasl.lsp")
 (ld "crec.lsp")
