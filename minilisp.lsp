@@ -8,10 +8,7 @@
 (define strcat string-append)
 (define fix truncate)
 (define rem remainder)
-(define = eq?)
 (define equal equal?)
-
-(define (vl-load-com) T)
 
 ; ---- utils ----
 
@@ -123,6 +120,9 @@
                    maybelen))))
       (substring str (- start 1) (+ start len -1)))))
 
+(define vl-load-com T)
+(define vl-symbol-name symbol->string)
+
 (define (vl-string->list str) (map char->integer (string->list str)))
 (define (nth item lst) (list-ref lst item))
 (define (remove-if-not fnc lst)
@@ -206,6 +206,15 @@
   (while test . code)
   `(do ((thedummy 0)) ((not ,test)) ,@code))
 
+(define (type item)
+  (cond
+    ((symbol? item)
+     'sym)
+    ((integer? item)
+     'int)
+    ((real? item)
+     'real)))
+
 ; ---- transform autolisp code to scm ----
 
 ; XXX probably don't work
@@ -223,3 +232,21 @@
     (__tree_map (lambda (x) (assoc x subs))
                 (lambda (x) (cdr (assoc x subs)))
                 al_code)))
+
+
+(define-macro
+  (= x y)
+  `(if (and (string? ,x) (string? ,y))
+     (string=? ,x ,y)
+     (eq? ,x ,y)))
+
+; lib
+
+(defun getvar (x / s)
+  (setq s (if (= 'sym (type x))
+            (vl-symbol-name x)
+            x))
+  (cond
+    ((= s "CDATE")
+     (get-date)
+     )))
