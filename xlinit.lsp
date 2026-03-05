@@ -11,6 +11,7 @@
 (ld "fasl.lsp")
 (ld "crec.lsp")
 (ld "pp.lsp")
+(ld "minilisp.lsp")
 
 ; this version of EVAL knows about the optional enviroment parameter
 (define (eval x &optional env)

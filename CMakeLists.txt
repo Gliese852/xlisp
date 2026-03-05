@@ -61,6 +61,7 @@ install(FILES
     fasl.lsp
     macros.lsp
     math.lsp
+    minilisp.lsp
     obj.lsp
     objects.lsp
     pp.lsp
