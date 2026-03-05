@@ -346,6 +346,7 @@ static xlSubrDef subrtab[] = {
 {       "TRANSCRIPT-OFF",                   xtransoff                   },
 {       "GETARG",                           xgetarg                     },
 {       "GET-TIME",                         xgettime                    },
+{       "GET-DATE",                         xgetdate                    },
 {       "GET-ENVIRONMENT-VARIABLE",         xgetenv                     },
 {       "IDLE",                             xidle                       },
 {       "EXIT",                             xexit                       },

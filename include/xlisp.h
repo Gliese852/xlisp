@@ -1035,6 +1035,7 @@ void xshowstack(void);
 void xshowcontrolstack(void);
 void xshowvaluestack(void);
 xlValue xgettime(void);
+xlValue xgetdate(void);
 xlValue xgetenv(void);
 xlValue xidle(void);
 xlValue xexit(void);

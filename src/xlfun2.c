@@ -2017,6 +2017,22 @@ xlValue xgettime(void)
     return (xlMakeFixnum((xlFIXTYPE)xlosTime()));
 }
 
+/* xgetdate - get the current date, as in autolisp (getvar 'cdate) */
+xlValue xgetdate(void)
+{
+    xlLastArg();
+    time_t t = xlosTime();
+    struct tm tm = *localtime(&t);
+    double res = 0.0;
+    res += (tm.tm_year + 1900) * 10000;
+    res += (tm.tm_mon + 1) * 100;
+    res += tm.tm_mday;
+    res += tm.tm_hour * 0.01;
+    res += tm.tm_min * 0.0001;
+
+    return xlMakeFlonum(res);
+}
+
 /* xgetenv - get the value of an environment variable */
 xlValue xgetenv(void)
 {
