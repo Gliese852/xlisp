@@ -9,6 +9,7 @@
 (define fix truncate)
 (define rem remainder)
 (define equal equal?)
+(define getenv get-environment-variable)
 
 ; ---- utils ----
 
