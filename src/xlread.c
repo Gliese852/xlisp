@@ -408,8 +408,8 @@ static xlValue read_quote(xlValue fptr,xlValue sym)
 static xlValue read_symbol(xlValue fptr)
 {
     extern xlValue xlKeywordPackage,k_external;
-    char buf[xlSTRMAX+1],*sname;
-    xlValue package,val,key;
+    char buf[xlSTRMAX+1];
+    xlValue val,key;
     
     /* get the symbol name */
     if (!getsymbol(fptr,buf))
@@ -419,43 +419,8 @@ static xlValue read_symbol(xlValue fptr)
     if (xlNumberStringP(buf,&val))
         return val;
     
-    /* handle an implicit package reference */
-    if ((sname = strchr(buf,':')) == NULL)
-        return xlInternCString(buf,xlGetValue(s_package),&key);
-        
-    /* handle an explicit package reference */
-    else {
-        
-        /* handle keywords */
-        if (sname == buf) {
-            if (strchr(++sname,':'))
-                xlFmtError("invalid symbol ~A",xlMakeCString(sname));
-            return xlInternCString(sname,xlKeywordPackage,&key);
-        }
-        
-        /* terminate the package name */
-        *sname++ = '\0';
-        
-        /* find the package */
-        if ((package = xlFindPackage(buf)) == xlNil)
-            xlFmtError("no package ~A",xlMakeCString(buf));
-            
-        /* handle an internal symbol reference */
-        if (*sname == ':') {
-            if (strchr(++sname,':'))
-                xlFmtError("invalid symbol ~A",xlMakeCString(sname));
-            return xlFindSymbol(sname,package,&key);
-        }
-        
-        /* handle an external symbol reference */
-        else {
-            if (strchr(sname,':'))
-                xlFmtError("invalid symbol ~A",xlMakeCString(sname));
-            if ((val = xlFindSymbol(sname,package,&key)) == xlNil || key != k_external)
-                xlFmtError("no external symbol ~A in ~S",xlMakeCString(sname),package);
-            return val;
-        }
-    }
+    /* handle an implicit package reference only yet, need ':' in symbol */
+    return xlInternCString(buf,xlGetValue(s_package),&key);
 }
 
 /* read_string - parse a string */
