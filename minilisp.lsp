@@ -120,7 +120,7 @@
                    maybelen))))
       (substring str (- start 1) (+ start len -1)))))
 
-(define vl-load-com T)
+(define (vl-load-com) T)
 (define vl-symbol-name symbol->string)
 
 (define (vl-string->list str) (map char->integer (string->list str)))
@@ -240,8 +240,13 @@
      (string=? ,x ,y)
      (eq? ,x ,y)))
 
+; TODO implement all
+(define (rtos n &optional mode precision)
+  (number->string n))
+
 ; lib
 
+; TODO implement all
 (defun getvar (x / s)
   (setq s (if (= 'sym (type x))
             (vl-symbol-name x)
