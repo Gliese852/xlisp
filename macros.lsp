@@ -20,7 +20,7 @@
     (cons (%expand-macros (car lyst)) (%expand-list (cdr lyst)))
     lyst))
 
-(define (compile expr #!optional env)
+(define (compile expr &optional env)
   (if (default-object? env)
     (%compile (%expand-macros expr))
     (%compile (%expand-macros expr) env)))

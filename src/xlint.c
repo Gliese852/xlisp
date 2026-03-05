@@ -19,7 +19,7 @@ xlEXPORT void (*xlNext)(void);      /* next function to call (xlApply or NULL) *
 
 /* external variables */
 extern xlValue s_package,s_stdin,s_stdout,xlUnboundObject;
-extern xlValue s_unassigned,xlDefaultObject,s_error;
+extern xlValue xlDefaultObject,s_error;
 extern xlValue s_stackpointer;
 
 /* error target (and bytecode dispatch target) */

@@ -16,8 +16,8 @@
 /* global variables */
 xlEXPORT xlValue xlSymConst,xlSymMEscape,xlSymSEscape,xlSymWSpace;
 xlEXPORT xlValue xlSymTMacro,xlSymNMacro,xlSymReadTable;
-xlValue lk_optional,lk_rest,lk_key,lk_aux,lk_allow_other_keys,slk_optional,slk_rest;
-xlValue xlEofObject,xlDefaultObject,s_unassigned,s_error;
+xlValue lk_optional,lk_rest,lk_key,lk_aux,lk_allow_other_keys;
+xlValue xlEofObject,xlDefaultObject,s_error;
 xlValue s_quote,s_function,s_quasiquote,s_unquote,s_unquotesplicing,s_dot;
 xlValue s_package,s_eval,s_load,xlUnboundObject,s_stdin,s_stdout,s_stderr;
 xlValue s_print,s_printcase,k_upcase,k_downcase,s_eql;
@@ -191,7 +191,6 @@ void xlEnterSymbols(void)
     /* enter the symbols used by the system */
     s_eval = xlInternAndExport("EVAL",xlLispPackage);
     s_load = xlInternAndExport("LOAD",xlLispPackage);
-    s_unassigned = xlInternAndExport("#!UNASSIGNED",xlLispPackage);
     s_package = xlInternAndExport("*PACKAGE*",xlLispPackage);
     s_error = xlInternAndExport("ERROR",xlLispPackage);
     s_stackpointer = xlInternAndExport("%STACK-POINTER",xlLispPackage);
@@ -208,10 +207,6 @@ void xlEnterSymbols(void)
 
     /* property tag for foreign pointer free function */
     s_freeptr = xlInternAndExport("%FREE-POINTER",xlLispPackage);
-
-    /* scheme keywords */
-    slk_optional        = xlInternAndExport("#!OPTIONAL",xlLispPackage);
-    slk_rest            = xlInternAndExport("#!REST",xlLispPackage);
 
     /* enter the lambda list keywords */
     lk_optional         = xlInternAndExport("&OPTIONAL",xlLispPackage);

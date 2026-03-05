@@ -19,19 +19,13 @@
                       || (x) == lk_rest \
                       || (x) == lk_key \
                       || (x) == lk_allow_other_keys \
-                      || (x) == lk_aux \
-                      || slambdakey(x))
-
-/* macro to check for a scheme lambda list keyword */
-#define slambdakey(x)   ((x) == slk_optional \
-                      || (x) == slk_rest)
+                      || (x) == lk_aux)
 
 /* global variables */
 xlEXPORT int xlDebugModeP = FALSE;
 
 /* external variables */
 extern xlValue lk_optional,lk_rest,lk_key,lk_allow_other_keys,lk_aux;
-extern xlValue slk_optional,slk_rest;
 
 /* local variables */
 static xlValue info;            /* compiler info */
@@ -471,15 +465,15 @@ static void parse_lambda_expr(xlValue fargs,xlValue body,int mflag)
         putcbyte(extra);
         putcbyte(findliteral(xlGetEnvNames(xlCar(info))));
 
-        /* check for &optional or #!optional arguments */
-        if (xlConsP(fargs) && (xlCar(fargs) == lk_optional || xlCar(fargs) == slk_optional)) {
+        /* check for &optional arguments */
+        if (xlConsP(fargs) && xlCar(fargs) == lk_optional) {
             key = xlCar(fargs);
             fargs = xlCdr(fargs);
             parse_optional_arguments(key,&fargs,xlFIRSTENV + rargc);
         }
 
         /* check for the &rest argument */
-        if (xlConsP(fargs) && (xlCar(fargs) == lk_rest || xlCar(fargs) == slk_rest))
+        if (xlConsP(fargs) && xlCar(fargs) == lk_rest)
             fargs = xlCdr(xlCdr(fargs));
         if (restarg)
             patch_argument_name(restarg);
@@ -533,8 +527,8 @@ static int count_arguments(xlValue fargs,int *prargc,int *poargc,xlValue *presta
         ++rargc;
     }
 
-    /* check for '&optional and #!optional arguments */
-    if (xlConsP(fargs) && (xlCar(fargs) == lk_optional || xlCar(fargs) == slk_optional)) {
+    /* check for '&optional arguments */
+    if (xlConsP(fargs) && xlCar(fargs) == lk_optional) {
         key = xlCar(fargs);
         fargs = xlCdr(fargs);
         while (xlConsP(fargs)
@@ -544,7 +538,7 @@ static int count_arguments(xlValue fargs,int *prargc,int *poargc,xlValue *presta
                 parse_optional_argument(arg,&arg,&def,&svar);
             else {
                 if (!xlSymbolP(arg))
-                    xlError("#!optional argument must be a symbol",arg);
+                    xlError("&optional argument must be a symbol",arg);
                 svar = xlNil;
             }
             if (svar)
@@ -555,8 +549,8 @@ static int count_arguments(xlValue fargs,int *prargc,int *poargc,xlValue *presta
         }
     }
 
-    /* check for the &rest or #!rest argument */
-    if (xlConsP(fargs) && (xlCar(fargs) == lk_rest || xlCar(fargs) == slk_rest)) {
+    /* check for the &rest argument */
+    if (xlConsP(fargs) && xlCar(fargs) == lk_rest) {
         fargs = xlCdr(fargs);
         if (xlConsP(fargs)
         &&  (arg = xlCar(fargs)) != xlNil
@@ -635,8 +629,8 @@ static void add_extra_arguments(xlValue fargs)
         fargs = xlCdr(fargs);
     }
 
-    /* check for '&optional and #!optional arguments */
-    if (xlConsP(fargs) && (xlCar(fargs) == lk_optional || xlCar(fargs) == slk_optional)) {
+    /* check for '&optional arguments */
+    if (xlConsP(fargs) && xlCar(fargs) == lk_optional) {
         key = xlCar(fargs);
         fargs = xlCdr(fargs);
         while (xlConsP(fargs)
@@ -646,7 +640,7 @@ static void add_extra_arguments(xlValue fargs)
                 parse_optional_argument(arg,&arg,&def,&svar);
             else {
                 if (!xlSymbolP(arg))
-                    xlError("#!optional argument must be a symbol",arg);
+                    xlError("&optional argument must be a symbol",arg);
                 svar = xlNil;
             }
             add_argument_name(xlNil);   /* arg */
@@ -656,8 +650,8 @@ static void add_extra_arguments(xlValue fargs)
         }
     }
 
-    /* check for the &rest or #!rest argument */
-    if (xlConsP(fargs) && (xlCar(fargs) == lk_rest || xlCar(fargs) == slk_rest)) {
+    /* check for the &rest argument */
+    if (xlConsP(fargs) && xlCar(fargs) == lk_rest) {
         fargs = xlCdr(fargs);
         if (xlConsP(fargs)
         &&  (arg = xlCar(fargs)) != xlNil

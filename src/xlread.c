@@ -494,33 +494,12 @@ static xlValue read_string(xlValue fptr)
 /* read_special - parse an atom starting with '#' */
 static int read_special(xlValue fptr,int ch,xlValue *pval)
 {
-    char buf[xlSTRMAX+1],buf2[xlSTRMAX+3];
+    char buf[xlSTRMAX+1];
     int lastch;
-    xlValue key;
     switch (ch) {
     case '!':
-        if (getsymbol(fptr,buf)) {
-            if (strcmp(buf,"TRUE") == 0) {
-                *pval = xlTrue;
-                return RO_EXPR;
-            }
-            else if (strcmp(buf,"FALSE") == 0) {
-                *pval = xlFalse;
-                return RO_EXPR;
-            }
-            else if (strcmp(buf,"NULL") == 0) {
-                *pval = xlNil;
-                return RO_EXPR;
-            }
-            else {
-                sprintf(buf2,"#!%s",buf);
-                *pval = xlInternCString(buf2,xlGetValue(s_package),&key);
-                return RO_EXPR;
-            }
-        }
-        else
-            xlFmtError("expecting symbol after '#!'");
-        break;
+        read_comment(fptr);
+        return RO_COMMENT;
     case '\\':
         ch = checkeof(fptr);    /* get the next character */
         xlUngetC(fptr,ch);      /* but allow getsymbol to get it also */

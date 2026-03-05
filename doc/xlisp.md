@@ -132,13 +132,11 @@ version, contact me first.
 
 ```lisp
 #T
-#!TRUE
 ```
 The true value. Where boolean expressions are required, any value other than `#F`
 is interpreted as a true value.
 ```lisp
 #F
-#!FALSE
 ```
 The false value. In XLISP, false and the empty list are the same value.
 
@@ -286,34 +284,7 @@ those locations, and the expressions in the body of the lambda expression will
 be evaluated sequentially in the extended environment. The result of the last
 expression in the body will be returned as the result of the procedure call.
 
-Formals should have the following form:
-
-```lisp
- (var... [#!OPTIONAL ovar...] [. rvar])
-```
-or
-
-```lisp
- (var... [#!OPTIONAL ovar...] [#!REST rvar])
-```
-where:
-
-- `var` is a required argument
-- `ovar` is an optional argument
-- `rvar` is a "rest" argument
-
-There are three parts to a formals list. The first lists the required arguments
-of the procedure. All calls to the procedure must supply values for each of the
-required arguments. The second part lists the optional arguments of the
-procedure. An optional argument may be supplied in a call or omitted. If it is
-omitted, a special value is given to the argument that satisfies the
-`default-object?` predicate. This provides a way to test to see if an optional
-argument was provided in a call or omitted. The last part of the formals list
-gives the "rest" argument. This argument will be bound to the rest of the list
-of arguments supplied to a call after the required and optional arguments have
-been removed.
-
-Alternatively, you can use Common Lisp syntax for the formal parameters:
+You can use Common Lisp syntax for the formal parameters:
 
 ```lisp
  (var...
