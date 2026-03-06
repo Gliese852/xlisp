@@ -124,6 +124,20 @@
 (define (vl-load-com) T)
 (define vl-symbol-name symbol->string)
 
+(define (vlax-get-acad-object)
+  'fake-acad-object)
+
+(define (vla-get-activedocument acad-object)
+  'fake-activedocument)
+
+(define (vla-get-modelspace active-document)
+  'fake-modelspace)
+
+(define (vl-string-search pattern str &optional start-pos)
+  (if start-pos
+    (string-search pattern str :start2 start-pos)
+    (string-search pattern str)))
+
 (define (vl-string->list str) (map char->integer (string->list str)))
 (define (nth item lst) (list-ref lst item))
 (define (remove-if-not fnc lst)
