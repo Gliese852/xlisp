@@ -410,15 +410,20 @@ static xlValue read_symbol(xlValue fptr)
     extern xlValue xlKeywordPackage,k_external;
     char buf[xlSTRMAX+1];
     xlValue val,key;
-    
+
     /* get the symbol name */
     if (!getsymbol(fptr,buf))
         xlFmtError("expecting a symbol or number");
-    
+
     /* check to see if it's a number */
     if (xlNumberStringP(buf,&val))
         return val;
-    
+
+    /* handle keywords */
+    if (buf[0] == ':') {
+        return xlInternCString(buf+1,xlKeywordPackage,&key);
+    }
+
     /* handle an implicit package reference only yet, need ':' in symbol */
     return xlInternCString(buf,xlGetValue(s_package),&key);
 }
