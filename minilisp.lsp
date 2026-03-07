@@ -91,8 +91,11 @@
         `(lambda ,args (let ,loc ,@code)))
       `(lambda ,args&loc ,@code))))
 
-(define (__apply f x)
-	(eval (cons f x)))
+(define-macro
+  (__apply fnc . args)
+  (if (eq? (car fnc) 'quote)
+    `(apply ,(cadr fnc) ,@args)
+    `(apply (eval ,fnc) ,@args)))
 
 ; "polymorfic" comparison
 (define (__< x1 x2) (if (string? x1) (string-ci<? x1 x2) (< x1 x2)))
@@ -248,6 +251,12 @@
                 (lambda (x) (cdr (assoc x subs)))
                 al_code)))
 
+; works in xlisp
+(define (__adapt_al_code al_code)
+  (let ((subs '((apply . __apply))))
+    (__tree_map (lambda (x) (assoc x subs))
+                (lambda (x) (cdr (assoc x subs)))
+                al_code)))
 
 (define-macro
   (= x y)
