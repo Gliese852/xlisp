@@ -91,11 +91,12 @@
         `(lambda ,args (let ,loc ,@code)))
       `(lambda ,args&loc ,@code))))
 
+(define __xl_apply apply)
 (define-macro
-  (__apply fnc . args)
-  (if (eq? (car fnc) 'quote)
-    `(apply ,(cadr fnc) ,@args)
-    `(apply (eval ,fnc) ,@args)))
+  (apply fnc . args)
+  (if (and (list? fnc) (eq? (car fnc) 'quote))
+    `(__xl_apply ,(cadr fnc) ,@args)
+    `(__xl_apply (eval ,fnc) ,@args)))
 
 ; "polymorfic" comparison
 (define (__< x1 x2) (if (string? x1) (string-ci<? x1 x2) (< x1 x2)))
@@ -106,8 +107,8 @@
 (define (1- x) (- x 1))
 (define (1+ x) (+ x 1))
 (define (mapcar fnc . args)
-  (let ((maxlen (apply min (map length args))))
-    (apply map (eval fnc)
+  (let ((maxlen (__xl_apply min (map length args))))
+    (__xl_apply map (eval fnc)
            (map (lambda (lst) (__cut maxlen lst))
                 args))))
 
@@ -160,10 +161,9 @@
         ((result (__apply fnc args)))
         (if result
           result
-          (apply vl-some (cons fnc (map cdr all-args))))))))
+          (__xl_apply vl-some (cons fnc (map cdr all-args))))))))
 (define (chr int) (list->string (list (integer->char int))))
 (define (ascii ch) (char->integer ch))
-
 
 (define (vl-sort lst qfnc)
   (if (pair? lst)
@@ -187,7 +187,7 @@
 (define (princ . x)
   (if (= 0 (length x))
     (display "")
-    (apply display x)))
+    (__xl_apply display x)))
 
 (define-macro
   (progn . body) `(begin ,@body))
