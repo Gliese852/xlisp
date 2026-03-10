@@ -146,3 +146,13 @@ xlEXPORT void xlosExit(int sts)
     if (callbacks->exit)
         (*callbacks->exit)(sts);
 }
+
+/* xlosDirectoryFiles - list files in directory */
+xlEXPORT xlValue xlosDirectoryFiles(const char *path, const char *pattern, int flag)
+{
+    if (callbacks->directoryFiles) {
+        return (*callbacks->directoryFiles)(path, pattern, flag);
+    } else {
+        return xlNil;
+    }
+}

@@ -6,6 +6,8 @@
 
 #include <time.h>
 #include <sys/stat.h>
+#include <dirent.h>
+#include <fnmatch.h>
 #ifdef LOADLIB
 #include <dlfcn.h>
 #endif
@@ -178,6 +180,37 @@ static xlValue xloadlibrary(void)
 }
 #endif
 
+/* osdirectoryfiles - list all files at a given path */
+/* path can be null, then the current directory is assumed */
+/* pattern is a glob template, can be null */
+/* flag == -1 means only directories are needed */
+/* flag == 0 means both directories and files are needed */
+/* flag == 1 means only file names are needed */
+xlEXPORT xlValue osdirectoryfiles(const char *path, const char *pattern, int flag)
+{
+    DIR *d;
+    struct dirent *dir;
+    d = opendir(path ? path : ".");
+
+    xlValue result = xlNil;
+
+    if (d) {
+        while ((dir = readdir(d)) != NULL) {
+
+            if (flag > 0 && dir->d_type != DT_REG) continue;
+            if (flag < 0 && dir->d_type != DT_DIR) continue;
+            if (pattern && fnmatch(pattern, dir->d_name, FNM_PATHNAME)) continue;
+
+            result = xlCons(xlMakeCString(dir->d_name), result);
+        }
+        closedir(d);
+        return result;
+    } else {
+        return xlNil;
+    }
+    return xlNil;
+}
+
 /* xlDefaultCallbacks - setup the default o/s interface callbacks */
 xlEXPORT xlCallbacks *xlDefaultCallbacks(const char *programPath)
 {
@@ -221,7 +254,9 @@ xlEXPORT xlCallbacks *xlDefaultCallbacks(const char *programPath)
     callbacks.consoleFlushInput = ostflush;
     callbacks.consoleFlushOutput = osflushoutput;
     callbacks.consoleCheck = ostcheck;
+    callbacks.directoryFiles = osdirectoryfiles;
 
     /* return the callback structure */
     return &callbacks;
 }
+

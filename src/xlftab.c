@@ -319,6 +319,7 @@ static xlSubrDef subrtab[] = {
         /* file I/O functions */
 {       "PARSE-PATH-STRING",                xparsepathstring            },
 {       "COMBINE-PATH-WITH-FILENAME",       xcombinepathwithfilename    },
+{       "DIRECTORY-FILES",                  xdirectoryfiles             },
 {       "FILE-MODIFICATION-TIME",           xfilemodtime                },
 {       "OPEN-INPUT-FILE",                  xopeni                      },
 {       "OPEN-OUTPUT-FILE",                 xopeno                      },

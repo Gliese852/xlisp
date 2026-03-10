@@ -645,6 +645,37 @@ xlValue xcombinepathwithfilename(void)
     return xlVal;
 }
 
+/* directoryfiles - built-in function 'directory-files' */
+xlValue xdirectoryfiles(void)
+{
+    xlValue tmp;
+
+    const char *path = NULL;
+    const char *pattern = NULL;
+    int flag = 0;
+
+    if (xlMoreArgsP()) {
+        tmp = xlGetArg();
+        if (xlStringP(tmp)) {
+            path = xlGetString(tmp);
+        }
+    }
+    if (xlMoreArgsP()) {
+        tmp = xlGetArg();
+        if (xlStringP(tmp)) {
+            pattern = xlGetString(tmp);
+        }
+    }
+    if (xlMoreArgsP()) {
+        tmp = xlGetArg();
+        if (xlNumberP(tmp)) {
+            flag = xlGetFixnum(tmp);
+        }
+    }
+
+    return xlosDirectoryFiles(path, pattern, flag);
+}
+
 /* xfilemodtime - built-in function 'file-modification-time' */
 xlValue xfilemodtime(void)
 {
