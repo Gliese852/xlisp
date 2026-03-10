@@ -11,6 +11,20 @@
 (define equal equal?)
 (define getenv get-environment-variable)
 
+(define __xl_apply apply)
+(define-macro
+  (apply fnc . args)
+  (if (and (list? fnc) (eq? (car fnc) 'quote))
+    `(__xl_apply ,(cadr fnc) ,@args)
+    `(__xl_apply (eval ,fnc) ,@args)))
+
+(define-macro
+  (mapcar fnc . args)
+  (if (and (list? fnc) (eq? (car fnc) 'quote))
+    `(map ,(cadr fnc) ,@args)
+    `(map (eval ,fnc) ,@args)))
+
+
 ; ---- utils ----
 
 (define (__make_pairs lst)
@@ -47,7 +61,7 @@
                (if (> n 0)
                  (append
                    '(())
-                   (apply append
+                   (__xl_apply append
                           (map (lambda (seq)
                                  (list
                                    (cons #\a seq)
@@ -91,13 +105,6 @@
         `(lambda ,args (let ,loc ,@code)))
       `(lambda ,args&loc ,@code))))
 
-(define __xl_apply apply)
-(define-macro
-  (apply fnc . args)
-  (if (and (list? fnc) (eq? (car fnc) 'quote))
-    `(__xl_apply ,(cadr fnc) ,@args)
-    `(__xl_apply (eval ,fnc) ,@args)))
-
 ; "polymorfic" comparison
 (define (__< x1 x2) (if (string? x1) (string-ci<? x1 x2) (< x1 x2)))
 (define (__> x1 x2) (if (string? x1) (string-ci>? x1 x2) (> x1 x2)))
@@ -106,11 +113,6 @@
 
 (define (1- x) (- x 1))
 (define (1+ x) (+ x 1))
-(define (mapcar fnc . args)
-  (let ((maxlen (__xl_apply min (map length args))))
-    (__xl_apply map (eval fnc)
-           (map (lambda (lst) (__cut maxlen lst))
-                args))))
 
 (define (set . bindings)
   (eval
@@ -142,6 +144,9 @@
     (string-search pattern str :start2 start-pos)
     (string-search pattern str)))
 
+(define (vl-directory-files &optional path pattern flag)
+  (directory-files path pattern flag))
+
 (define (vl-string->list str) (map char->integer (string->list str)))
 (define (nth item lst) (list-ref lst item))
 (define (remove-if-not fnc lst)
@@ -158,7 +163,7 @@
     (if (null? (car args))
       #f
       (let
-        ((result (__apply fnc args)))
+        ((result (apply fnc args)))
         (if result
           result
           (__xl_apply vl-some (cons fnc (map cdr all-args))))))))
@@ -251,7 +256,7 @@
                 (lambda (x) (cdr (assoc x subs)))
                 al_code)))
 
-; works in xlisp
+; works in xlisp, though we moved to redefining apply
 (define (__adapt_al_code al_code)
   (let ((subs '((apply . __apply))))
     (__tree_map (lambda (x) (assoc x subs))
