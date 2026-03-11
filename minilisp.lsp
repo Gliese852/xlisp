@@ -24,8 +24,12 @@
     `(map ,(cadr fnc) ,@args)
     `(map (eval ,fnc) ,@args)))
 
-
-; ---- utils ----
+; TODO more general transformation? (many similaf functions)
+(define-macro
+  (vl-some fnc . args)
+  (if (and (list? fnc) (eq? (car fnc) 'quote))
+    `(some ,(cadr fnc) ,@args)
+    `(some (eval ,fnc) ,@args)))
 
 (define (__make_pairs lst)
   (if (not (null? (cdr lst)))
@@ -149,24 +153,13 @@
 
 (define (vl-string->list str) (map char->integer (string->list str)))
 (define (nth item lst) (list-ref lst item))
-(define (remove-if-not fnc lst)
-  (if (pair? lst)
-    (if (fnc (car lst))
-      (cons (car lst) (remove-if-not fnc (cdr lst)))
-      (remove-if-not fnc (cdr lst)))
-    ()))
-(define (remove-if fnc lst)
-  (remove-if-not (lambda (x) (not (fnc x))) lst))
 
-(define (vl-some fnc . all-args)
-  (let ((args (map car all-args)))
-    (if (null? (car args))
-      #f
-      (let
-        ((result (apply fnc args)))
-        (if result
-          result
-          (__xl_apply vl-some (cons fnc (map cdr all-args))))))))
+(define-macro
+  (vl-remove-if fnc lst)
+  (if (and (list? fnc) (eq? (car fnc) 'quote))
+    `(remove-if ,(cadr fnc) ,lst)
+    `(remove-if (eval ,fnc) ,lst)))
+
 (define (chr int) (list->string (list (integer->char int))))
 (define (ascii ch) (char->integer ch))
 
@@ -273,7 +266,16 @@
 (define (rtos n &optional mode precision)
   (number->string n))
 
-; lib
+; TODO any general type-checking?
+(define (itoa n)
+  (if (integer? n)
+    (number->string n)
+    (error "argument must be integer")))
+
+(define (atoi str)
+  (setq num (string->number str))
+  (if (not num) (setq num 0))
+  (setq num (truncate num)))
 
 ; TODO implement all
 (defun getvar (x / s)
