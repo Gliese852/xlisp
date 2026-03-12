@@ -10,6 +10,8 @@
 (define rem remainder)
 (define equal equal?)
 (define getenv get-environment-variable)
+(define vl-mkdir make-directory)
+(define vl-file-systime file-modification-time)
 
 (define __xl_apply apply)
 (define-macro
@@ -303,3 +305,5 @@
   (if (/= 0 (logand op 8))
     (setq m4 (logand (lognot x) (lognot y))))
   (logior m1 m2 m3 m4))
+
+
