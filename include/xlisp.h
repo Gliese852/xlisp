@@ -615,7 +615,7 @@ typedef struct {
     int (*directorySeparator)(void);
     xlValue (*(*findSubr)(const char *name))(void);
     void (*error)(const char *msg);
-    int (*fileModTime)(const char *fname,xlFIXTYPE *pModTime);
+    xlValue (*fileModTime)(const char *fname);
     int (*consoleGetC)(void);
     void (*consolePutC)(int ch);
     int (*consoleAtBOLP)(void);
@@ -1310,7 +1310,7 @@ xlEXPORT int xlosMakeDirectory(const char *path);
 xlEXPORT void xlosExit(int sts);
 xlEXPORT xlValue (*xlosFindSubr(const char *name))(void);
 xlEXPORT void xlosError(const char *msg);
-xlEXPORT int xlosFileModTime(const char *fname,xlFIXTYPE *pModTime);
+xlEXPORT xlValue xlosFileModTime(const char *fname);
 xlEXPORT int xlosConsoleGetC(void);
 xlEXPORT void xlosConsolePutC(int ch);
 xlEXPORT void xlosConsolePutS(const char *str);

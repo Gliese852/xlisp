@@ -690,14 +690,12 @@ xlValue xmakedirectory(void)
 /* xfilemodtime - built-in function 'file-modification-time' */
 xlValue xfilemodtime(void)
 {
-    xlFIXTYPE mtime;
-
     /* parse the arguments */
     xlVal = xlGetArgString();
     xlLastArg();
 
     /* get the file modification time */
-    return xlosFileModTime(xlGetString(xlVal),&mtime) ? xlMakeFixnum(mtime) : xlNil;
+    return xlosFileModTime(xlGetString(xlVal));
 }
 
 /* xopeni - built-in function 'open-input-file' */

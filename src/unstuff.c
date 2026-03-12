@@ -25,7 +25,7 @@ static const char *osloadpath(void);
 static const char *osparsepath(const char **pp);
 static void osexit(int sts);
 static void oserror(const char *msg);
-static int osfmodtime(const char *fname,xlFIXTYPE *pModTime);
+static xlValue  osfmodtime(const char *fname);
 static int ostgetc(void);
 static void ostputc(int ch);
 static int ostatbol(void);
@@ -100,12 +100,24 @@ static void oserror(const char *msg)
 }
 
 /* osfmodtime - return the modification time of a file */
-static int osfmodtime(const char *fname,xlFIXTYPE *pModTime)
-{                        
+static xlValue osfmodtime(const char *fname)
+{
     struct stat info;
-    int sts = stat(fname,&info);
-    *pModTime = info.st_mtime;
-    return sts == 0;
+    xlValue result = xlNil;
+
+    if(stat(fname,&info)) return xlNil;
+
+    struct tm *t = localtime(&info.st_mtim.tv_sec);
+
+    result = xlCons(xlMakeFixnum(t->tm_sec), result);
+    result = xlCons(xlMakeFixnum(t->tm_min), result);
+    result = xlCons(xlMakeFixnum(t->tm_hour), result);
+    result = xlCons(xlMakeFixnum(t->tm_mday), result);
+    result = xlCons(xlMakeFixnum(t->tm_wday), result);
+    result = xlCons(xlMakeFixnum(t->tm_mon + 1), result);
+    result = xlCons(xlMakeFixnum(t->tm_year + 1900), result);
+
+    return result;
 }
 
 /* ostgetc - get a character from the terminal */

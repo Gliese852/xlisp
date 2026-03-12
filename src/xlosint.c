@@ -71,9 +71,9 @@ xlEXPORT void xlosError(const char *msg)
 }
 
 /* xlosFileModTime - return the modification time of a file */
-xlEXPORT int xlosFileModTime(const char *fname,xlFIXTYPE *pModTime)
-{                        
-    return callbacks->fileModTime ? (*callbacks->fileModTime)(fname,pModTime) : FALSE;
+xlEXPORT xlValue xlosFileModTime(const char *fname)
+{
+    return callbacks->fileModTime ? (*callbacks->fileModTime)(fname) : xlNil;
 }
 
 /* xlosConsoleGetC - get a character from the terminal */
