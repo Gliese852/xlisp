@@ -286,3 +286,20 @@
     ((= s "CDATE")
      (get-date)
      )))
+
+(defun boole (op x y / m1 m2 m3 m4)
+  ; x y op's bit
+  ; 0 0 8
+  ; 0 1 4
+  ; 1 0 2
+  ; 1 1 1
+  (setq m1 0 m2 0 m3 0 m4 0)
+  (if (/= 0 (logand op 1))
+    (setq m1 (logand x y)))
+  (if (/= 0 (logand op 2))
+    (setq m2 (logand x (lognot y))))
+  (if (/= 0 (logand op 4))
+    (setq m3 (logand (lognot x) y)))
+  (if (/= 0 (logand op 8))
+    (setq m4 (logand (lognot x) (lognot y))))
+  (logior m1 m2 m3 m4))
