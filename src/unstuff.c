@@ -211,6 +211,16 @@ xlEXPORT xlValue osdirectoryfiles(const char *path, const char *pattern, int fla
     return xlNil;
 }
 
+/* osmakedirectory - make directory */
+xlEXPORT int osmakedirectory(const char *path)
+{
+    struct stat s = {0};
+    if (!stat(path, &s) && S_ISDIR(s.st_mode)) {
+        return 0;
+    }
+    return mkdir(path, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+}
+
 /* xlDefaultCallbacks - setup the default o/s interface callbacks */
 xlEXPORT xlCallbacks *xlDefaultCallbacks(const char *programPath)
 {
@@ -255,6 +265,7 @@ xlEXPORT xlCallbacks *xlDefaultCallbacks(const char *programPath)
     callbacks.consoleFlushOutput = osflushoutput;
     callbacks.consoleCheck = ostcheck;
     callbacks.directoryFiles = osdirectoryfiles;
+    callbacks.makeDirectory = osmakedirectory;
 
     /* return the callback structure */
     return &callbacks;

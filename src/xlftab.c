@@ -320,6 +320,7 @@ static xlSubrDef subrtab[] = {
 {       "PARSE-PATH-STRING",                xparsepathstring            },
 {       "COMBINE-PATH-WITH-FILENAME",       xcombinepathwithfilename    },
 {       "DIRECTORY-FILES",                  xdirectoryfiles             },
+{       "MAKE-DIRECTORY",                   xmakedirectory              },
 {       "FILE-MODIFICATION-TIME",           xfilemodtime                },
 {       "OPEN-INPUT-FILE",                  xopeni                      },
 {       "OPEN-OUTPUT-FILE",                 xopeno                      },

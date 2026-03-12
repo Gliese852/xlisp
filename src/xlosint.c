@@ -156,3 +156,13 @@ xlEXPORT xlValue xlosDirectoryFiles(const char *path, const char *pattern, int f
         return xlNil;
     }
 }
+
+/* xlosMakeDirectory - make directory */
+xlEXPORT int xlosMakeDirectory(const char *path)
+{
+    if (callbacks->makeDirectory) {
+        return (*callbacks->makeDirectory)(path);
+    } else {
+        return -1;
+    }
+}

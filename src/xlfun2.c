@@ -676,6 +676,17 @@ xlValue xdirectoryfiles(void)
     return xlosDirectoryFiles(path, pattern, flag);
 }
 
+/* makedirectory - built-in function 'make-directory' */
+xlValue xmakedirectory(void)
+{
+    xlValue x = xlGetArgString();
+    const char *path = xlGetString(x);
+    int result = xlosMakeDirectory(path);
+    if (!result) return xlTrue;
+    return xlNil;
+}
+
+
 /* xfilemodtime - built-in function 'file-modification-time' */
 xlValue xfilemodtime(void)
 {

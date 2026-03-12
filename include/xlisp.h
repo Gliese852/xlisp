@@ -624,6 +624,7 @@ typedef struct {
     int (*consoleCheck)(void);
     void (*exit)(int sts);
     xlValue (*directoryFiles)(const char *path, const char *pattern, int flag);
+    int (*makeDirectory)(const char *path);
 } xlCallbacks;
 
 /* external variables */
@@ -941,6 +942,7 @@ xlValue xparsepathstring(void);
 void xsplitpathfromfilename(void);
 xlValue xcombinepathwithfilename(void);
 xlValue xdirectoryfiles(void);
+xlValue xmakedirectory(void);
 xlValue xfilemodtime(void);
 xlValue xopeni(void);
 xlValue xopeno(void);
@@ -1304,6 +1306,7 @@ xlEXPORT const char *xlosLoadPath(void);
 xlEXPORT const char *xlosParsePath(const char **pp);
 xlEXPORT int xlosDirectorySeparator(void);
 xlEXPORT xlValue xlosDirectoryFiles(const char *path, const char *pattern, int flag);
+xlEXPORT int xlosMakeDirectory(const char *path);
 xlEXPORT void xlosExit(int sts);
 xlEXPORT xlValue (*xlosFindSubr(const char *name))(void);
 xlEXPORT void xlosError(const char *msg);
