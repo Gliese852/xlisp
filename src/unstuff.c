@@ -233,6 +233,11 @@ xlEXPORT int osmakedirectory(const char *path)
     return mkdir(path, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
 }
 
+/* osdirectoryseparator - separator char for linux */
+int osdirectoryseparator(void) {
+    return '/';
+}
+
 /* xlDefaultCallbacks - setup the default o/s interface callbacks */
 xlEXPORT xlCallbacks *xlDefaultCallbacks(const char *programPath)
 {
@@ -263,9 +268,11 @@ xlEXPORT xlCallbacks *xlDefaultCallbacks(const char *programPath)
             progpath[len - 4] = '\0';
     }
 
+
     /* setup the callbacks */
     callbacks.loadPath = osloadpath;
     callbacks.parsePath = osparsepath;
+    callbacks.directorySeparator = osdirectoryseparator;
     callbacks.exit = osexit;
     callbacks.findSubr = osfindsubr;
     callbacks.error = oserror;
