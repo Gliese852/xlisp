@@ -12,6 +12,7 @@
 (define getenv get-environment-variable)
 (define vl-mkdir make-directory)
 (define vl-file-systime file-modification-time)
+(define close close-port)
 
 (define __xl_apply apply)
 (define-macro
@@ -264,6 +265,12 @@
      (string=? ,x ,y)
      (eq? ,x ,y)))
 
+(define-macro
+  (/= x y)
+  `(if (and (string? ,x) (string? ,y))
+     (string/=? ,x ,y)
+     (not (eq? ,x ,y))))
+
 ; TODO implement all
 (define (rtos n &optional mode precision)
   (number->string n))
@@ -306,4 +313,56 @@
     (setq m4 (logand (lognot x) (lognot y))))
   (logior m1 m2 m3 m4))
 
+(defun vl-filename-extension (str / index)
+  (setq index (string-search "." str :from-end? T))
+  (if index (substring str index)))
 
+(defun vl-filename-base (str / index)
+  (multiple-value-bind
+    (path file) (split-path-from-filename str)
+    (setq index (string-search "." file :from-end? T))
+    (if index
+      (substring file 0 index)
+      file)))
+
+(defun vl-filename-directory (str / index)
+  (multiple-value-bind
+    (path file) (split-path-from-filename str)
+    (or path "")))
+
+(defun vl-file-copy (src dst &optional append? / src_port dst_port b)
+  (setq src_port (open-input-file src 'binary))
+  (if (not src_port)
+    nil
+    (progn
+      (setq dst_port (if append?
+                       (open-append-file dst 'binary)
+                       (open-output-file dst 'binary)))
+      (if (not dst_port)
+        (progn (close-port src_port) nil)
+        (progn
+          (while (not (eof-object? (setq b (read-byte src_port))))
+                 (write-byte b dst_port))
+          (close-port src_port)
+          (close-port dst_port)
+          T)))))
+
+(defun open (filename mode)
+  (cond
+    ((= mode "r")
+     (open-input-file filename))
+    ((= mode "w")
+     (open-output-file filename))
+    ((= mode "a")
+     (open-append-file filename))))
+
+(defun write-line (str &optional port)
+  (display str port)
+  (newline port)
+  str)
+
+(defun startapp (cmd &optional (file "") / result)
+  (setq result (system (strcat cmd " " file)))
+  (if (= 0 result)
+    33
+    result))
