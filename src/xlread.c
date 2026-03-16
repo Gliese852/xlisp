@@ -424,6 +424,9 @@ static xlValue read_symbol(xlValue fptr)
         return xlInternCString(buf+1,xlKeywordPackage,&key);
     }
 
+    /* 'nil is also nil */
+    if (!strcmp(buf, "NIL")) return xlNil;
+
     /* handle an implicit package reference only yet, need ':' in symbol */
     return xlInternCString(buf,xlGetValue(s_package),&key);
 }

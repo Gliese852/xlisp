@@ -103,7 +103,7 @@ static void print(xlValue fptr,xlValue vptr,int escflag,int depth)
 
     /* print nil */
     if (vptr == xlNil) {
-        xlPutStr(fptr,"()");
+        xlPutStr(fptr,"NIL");
         return;
     }
 
