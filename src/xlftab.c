@@ -252,6 +252,8 @@ static xlSubrDef subrtab[] = {
 {       "STRING-SEARCH-CI",                 xstrisearch                 },
 {       "NUMBER->STRING",                   xnumstr                     },
 {       "STRING->NUMBER",                   xstrnum                     },
+{       "REGCOMP",                          xregcomp                    },
+{       "REGEXEC",                          xregexec                    },
 
         /* character functions */
 {       "CHAR<?",                           xchrlss                     },

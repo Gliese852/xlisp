@@ -5,6 +5,7 @@
 */
 
 #include "xlisp.h"
+#include <regex.h>
 
 /* local definitions */
 #define fix(n)  xlMakeFixnum((xlFIXTYPE)(n))
@@ -1718,6 +1719,87 @@ xlValue xstrnum(void)
         return xlNumberStringP(xlGetString(str),&str) ? str : xlNil;
     else
         return xlRadixNumberStringP(xlGetString(str),radix,&str) ? str : xlNil;
+}
+
+void free_regex(void *ptr) {
+    regfree(ptr);
+    free(ptr);
+};
+
+static xlCClassDef regex_t_def = {
+    .name = "regex_t",
+    .free = free_regex
+};
+
+/* xregcomp - built-in function 'regcomp' - compile regular expression */
+xlValue xregcomp(void)
+{
+    xlValue result;
+    xlValue str, flags;
+
+    str = xlGetArgString();
+    flags = xlGetArgFixnum();
+    xlLastArg();
+
+    regex_t *regex = (regex_t *)malloc(sizeof(regex_t));
+
+    int err = regcomp(regex, xlGetString(str), xlGetFixnum(flags));
+
+    if (err) {
+        char buf[1024];
+        regerror(err, regex, buf, sizeof(buf));
+        xlError("regcomp error:", xlMakeCString(buf));
+    };
+
+    xlCClass *ccls = xlMakeCClass(&regex_t_def, NULL);
+    result = xlMakeForeignPtr(ccls, regex);
+
+    return result;
+}
+
+/* xregexec - built-in function 'regexec' - match against precompiled pattern */
+xlValue xregexec(void)
+{
+    xlValue result, xregex, xpat, xrnum, xflags;
+
+    xregex = xlGetArgForeignPtr();
+    xpat = xlGetArgString();
+    xrnum = xlGetArgFixnum();
+    xflags = xlGetArgFixnum();
+    xlLastArg();
+
+    int rnum = xlGetFixnum(xrnum);
+    regmatch_t *match = NULL;
+
+    if (rnum > 0) {
+        if (rnum > 20000) {
+            xlError("Too big match count requested, (max 20000)", xrnum);
+        }
+        match = (regmatch_t*)malloc(rnum * sizeof(regmatch_t));
+    }
+
+    int err = regexec(xlGetFPtr(xregex), xlGetString(xpat), rnum, match, xlGetFixnum(xflags));
+
+    if (err) {
+        if (err == REG_NOMATCH) return xlNil;
+
+        char buf[1024];
+        regerror(err, xlGetFPtr(xregex), buf, sizeof(buf));
+        xlError("regexec error:", xlMakeCString(buf));
+    };
+
+    if (rnum == 0) return xlTrue;
+
+    result = xlNil;
+
+    for (int i = rnum - 1; i >= 0; --i) {
+        regmatch_t *item = match + i;
+
+        xlValue xitem = xlCons(xlMakeFixnum(item->rm_so), xlMakeFixnum(item->rm_eo));
+        result = xlCons(xitem, result);
+    }
+
+    return result;
 }
 
 /* xchar - extract a character from a string */

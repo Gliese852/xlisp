@@ -994,6 +994,8 @@ xlValue xstrsearch(void);
 xlValue xstrisearch(void);
 xlValue xnumstr(void);
 xlValue xstrnum(void);
+xlValue xregcomp(void);
+xlValue xregexec(void);
 xlValue xcharint(void);
 xlValue xintchar(void);
 xlValue xchrlss(void);
