@@ -372,3 +372,9 @@
   (if (= 0 result)
     33
     result))
+
+(defun subst (newitem olditem lst)
+  (if lst
+    (if (= (car lst) olditem)
+      (cons newitem (subst newitem olditem (cdr lst)))
+      (cons (car lst) (subst newitem olditem (cdr lst))))))

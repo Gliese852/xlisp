@@ -166,7 +166,7 @@
   (let ((expander (get (car x) '%macro)))
     (expander x)))
     
-(define (subst new old tree)
+(define (xl_subst new old tree)
   (define (subst1 tree)
     (cond ((pair? tree) (cons (subst1 (car tree))
                               (subst1 (cdr tree))))
@@ -177,7 +177,7 @@
 (macro define-macro
   (lambda (form)
     (let ((name (caadr form))
-          (args (subst '&rest '&body (cdadr form)))
+          (args (xl_subst '&rest '&body (cdadr form)))
           (body (cddr form)))
       `(macro ,name (named-lambda ,name (form)
                       (apply (lambda ,args ,@body) (cdr form)))))))
