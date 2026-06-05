@@ -271,11 +271,10 @@
      (string=? ,x ,y)
      (eq? ,x ,y)))
 
-(define-macro
-  (/= x y)
-  `(if (and (string? ,x) (string? ,y))
-     (string/=? ,x ,y)
-     (not (eq? ,x ,y))))
+(define (/= x y)
+  (if (and (string? x) (string? y))
+     (string/=? x y)
+     (not (eq? x y))))
 
 ; TODO implement all
 (define (rtos n &optional mode precision)
