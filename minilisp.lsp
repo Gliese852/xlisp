@@ -296,6 +296,113 @@
   (if (not num) (setq num 0))
   (setq num (truncate num)))
 
+(defun translate-one (item charmap / m res)
+  (if (setq m (assoc item charmap))
+    (cdr m)
+    item))
+
+(defun varlog (name val)
+  (display "\n")
+  (display name)
+  (display ": ")
+  (display val)
+  val)
+
+; NO YES MAYBE
+(defun trans-one-piece (str p1 p2 charmap / piece_len item item_len res)
+  (setq res 'NO)
+  (setq piece_len (- p2 p1))
+  (setq inp charmap)
+
+  (while (and inp (or (= res 'NO) (= res 'MAYBE)))
+
+         (setq item (caar inp))
+         (setq item_len (string-length item))
+
+         (if (<= piece_len item_len)
+           (if (= 0 (string-search str item :start1 p1 :end1 p2))
+             (if (= item_len piece_len)
+               (setq res (cdar inp))
+               (setq res 'MAYBE))))
+
+         (setq inp (cdr inp)))
+  res)
+
+; return: ( piece . len )
+(defun trans-one (str pos charmap / piece len max_piece_len res)
+
+  (setq max_piece_len (- (string-length str) pos))
+  (if (> max_piece_len 4) (setq max_piece_len 4))
+
+  (setq len 0)
+  (setq res 'MAYBE)
+  (while (and (< len max_piece_len)
+              (= res 'MAYBE))
+         (setq len (1+ len))
+         (setq res (trans-one-piece str pos (+ pos len) charmap)))
+
+  (if (= 'NO res) (setq len 1))
+  (if (symbol? res)
+    (cons (substring str pos (+ pos len)) len)
+    (cons res len)))
+
+(defun translate-string (str charmap / out pos len res piece eated lst)
+  (setq out nil)
+  (setq pos 0)
+  (setq len (string-length str))
+  (while (< pos len)
+         (setq res (trans-one str pos charmap))
+         (setq piece (car res))
+         (setq eated (cdr res))
+         (foreach c (string->list piece)
+                  (setq out (cons c out)))
+         (setq pos (+ pos eated)))
+  (list->string (reverse out)))
+
+; ~ 	(tilde) Pattern not found in string.
+; * 	Standard wildcard; can be used anywhere.
+; ? 	Matches for a space held by a character or number; number of question marks (?) must exactly match number of characters or numbers in the string.
+; # 	(pound) Matches any single number.
+; @ 	Matches any single character; may not be a number.
+; . 	(period) Matches any single non-alphanumeric character.
+; 	(space) Matches one or more spaces.
+; [ ] 	Matches for any of the characters enclosed in the brackets.
+; [~ ] 	True only if there are extra characters not included in the brackets.
+; [ - ] 	(hyphen) Searches within a predefined range pattern.
+; , 	(comma) The "or" option.
+; ' 	(reverse quote) Read next character literally; use for special characters.
+(defun wcmatch->regex (str)
+  (strcat "^"
+          (translate-string str
+                            '(("[~" . "[^")
+                              ("*" . ".*")
+                              ("?" . ".")
+                              ("#" . "[0-9]")
+                              ("@" . "[^0-9]")
+                              ("." . "\\W")
+                              (" " . " \\+")
+                              ("," . "$|^")
+
+                              ("`[" . "\\[")
+                              ("`]" . "\\]")
+                              ("`*" . "\\*")
+                              ("`?" . "?")
+                              ("`#" . "#")
+                              ("`@" . "@")
+                              ("`." . "\\.")
+                              ("\," . ",")
+                              ))
+          "$"))
+
+(defun string-match (str pat / preg)
+  (setq preg (regcomp pat 0))
+  (regexec preg str 0 0))
+
+(defun wcmatch (str pat / preg)
+  (if (char=? (string-ref pat 0) #\~)
+    (not (string-match str (wcmatch->regex (substring pat 1))))
+    (string-match str (wcmatch->regex pat))))
+
 ; TODO implement all
 (defun getvar (x / s)
   (setq s (if (= 'sym (type x))
