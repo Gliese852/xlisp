@@ -100,17 +100,6 @@
     (cons x y)
     (list x)))
 
-(define-macro
-  (__lambda args&loc . code)
-  (let ((/args (member '/ (reverse args&loc))))
-    (if /args
-      (let ((args (reverse (cdr /args)))
-            (loc (map
-                   (lambda (x)
-                     (list x #f))
-                   (cdr (member '/ args&loc)))))
-        `(lambda ,args (let ,loc ,@code)))
-      `(lambda ,args&loc ,@code))))
 
 ; "polymorfic" comparison
 (define (__< x1 x2) (if (string? x1) (string-ci<? x1 x2) (< x1 x2)))
@@ -217,7 +206,7 @@
 
 (define-macro
   (defun name args&loc . code)
-  `(setq ,name (__lambda ,args&loc ,@code)))
+  `(setq ,name (lambda ,args&loc ,@code)))
 
 (define-macro
   (foreach var . lst&prc)
@@ -245,7 +234,7 @@
 ; XXX probably don't work
 (define (__transform_to_scheme al_code)
   (let ((subs (append '((cons . __cons)
-                        (lambda . __lambda)
+                        ; (lambda . __lambda) deleted
                         (apply . __apply)
                         (< . __<)
                         (> . __>))
