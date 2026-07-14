@@ -152,11 +152,7 @@
     `(remove-if ,(cadr fnc) ,lst)
     `(remove-if (eval ,fnc) ,lst)))
 
-(define-macro
-  (vl-remove fnc lst)
-  (if (and (list? fnc) (eq? (car fnc) 'quote))
-    `(remove ,(cadr fnc) ,lst)
-    `(remove (eval ,fnc) ,lst)))
+(define vl-remove remove)
 
 (define (chr int) (list->string (list (integer->char int))))
 (define (ascii ch) (char->integer ch))
