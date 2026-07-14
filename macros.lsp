@@ -75,10 +75,22 @@
         `((letrec ,(reverse bindings) ,@body))
         body))))
 
-(compiler-syntax lambda
+(compiler-syntax _xl_lambda
   (lambda (form)
     `(lambda ,(second form)
        ,@(%expand-list (convert-internal-definitions (cddr form))))))
+
+(compiler-syntax lambda
+  (lambda (form)
+    (let ((/args (member '/ (reverse (second form)))))
+      (if /args
+        (let ((args (reverse (cdr /args)))
+              (loc (map
+                     (lambda (x)
+                       (list x #f))
+                     (cdr (member '/ (second form))))))
+          `(lambda ,args (let ,loc ,@(%expand-list (convert-internal-definitions (cddr form))))))
+        `(lambda ,(second form) ,@(%expand-list (convert-internal-definitions (cddr form))))))))
 
 (compiler-syntax named-lambda
   (lambda (form)
@@ -180,7 +192,7 @@
           (args (xl_subst '&rest '&body (cdadr form)))
           (body (cddr form)))
       `(macro ,name (named-lambda ,name (form)
-                      (apply (lambda ,args ,@body) (cdr form)))))))
+                      (apply (_xl_lambda ,args ,@body) (cdr form)))))))
 
 (define-macro (fluid-let bindings &body body)
   (let ((vars (map (lambda (binding) (if (pair? binding) (car binding) binding)) bindings))
