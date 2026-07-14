@@ -1616,6 +1616,20 @@ found.
 ```
 Like `STRING-SEARCH` but case insensitive.
 
+ ```lisp
+ (REGCOMP pattern cflags)
+```
+Compile a regular expression into a form that is suitable for subsequent
+REGEXEC searches.
+
+ ```lisp
+ (REGEXEC preg string nmatch eflags)
+```
+Match a string against the precompiled pattern buffer, preg. nmatch is used to
+provide information regarding the location of any matches. If nmatch is 0, bool
+is returned. If greater than 0, the list is returned ((rm_so . rm_eo) ... ).
+Details in the documentation for С function of the same name.
+
 # 31. String Comparison Functions
 
  ```lisp 
